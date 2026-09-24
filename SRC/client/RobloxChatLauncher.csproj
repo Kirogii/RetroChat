@@ -1,0 +1,73 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<OutputType Condition="'$(Configuration)' == 'Debug'">Exe</OutputType>
+	<OutputType Condition="'$(Configuration)' != 'Debug'">WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+	<AssemblyTitle>Roblox Chat Launcher</AssemblyTitle>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <StartupObject>Program</StartupObject>
+    <ApplicationIcon>..\assets\brand\rcl_icon-variable.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="CoreGuiAssets\*.png" LogicalName="CoreGui2013.%(Filename).png" />
+    <EmbeddedResource Include="CoreGui2016Assets\*.png" LogicalName="CoreGui2016.%(Filename).png" />
+    <EmbeddedResource Include="Emoji\emoji.json" LogicalName="emoji.json" />
+    <EmbeddedResource Include="Emoji\Images\*.png" LogicalName="EmojiImages.%(Filename).png" />
+    <None Update="Emoji\LICENSE" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Emoji\LICENSE-GRAPHICS" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Emoji\ATTRIBUTION.md" CopyToOutputDirectory="PreserveNewest" />
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MouseKeyHook" Version="5.7.1" />
+    <PackageReference Include="Semver" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Localization\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings1.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings1.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\Strings.zh-Hans.resx">
+      <LastGenOutput>Strings.zh-Hans.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Localization\Strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings1.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Fonts\static\*.ttf">
+			<LogicalName>%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Fonts\SourceSans3-*.ttf">
+			<LogicalName>%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Fonts\SourceSansPro-*.ttf">
+			<LogicalName>%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
+
+</Project>

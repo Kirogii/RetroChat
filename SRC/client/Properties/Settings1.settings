@@ -1,0 +1,43 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="RobloxChatLauncher.Properties" GeneratedClassName="Settings1">
+  <Profiles />
+  <Settings>
+    <Setting Name="ChatUsageId" Type="System.String" Scope="User"><Value Profile="(Default)"></Value></Setting>
+    <Setting Name="ChatFrameSizes" Type="System.String" Scope="User"><Value Profile="(Default)">{}</Value></Setting>
+    <Setting Name="ChatTextStyle" Type="System.String" Scope="User"><Value Profile="(Default)">light</Value></Setting>
+    <Setting Name="Theme2014Mode" Type="System.String" Scope="User"><Value Profile="(Default)">classic</Value></Setting>
+    <Setting Name="ChatDragEnabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ChatDragOffsets" Type="System.String" Scope="User">
+      <Value Profile="(Default)">{}</Value>
+    </Setting>
+    <Setting Name="WindowOffset" Type="System.Drawing.Point" Scope="User">
+      <Value Profile="(Default)">10, 40</Value>
+    </Setting>
+    <Setting Name="WindowSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">500, 400</Value>
+    </Setting>
+    <Setting Name="ChatContainerSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">472, 297</Value>
+    </Setting>
+    <Setting Name="IsVerified" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="RobloxUserId" Type="System.Int64" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MessageFilterPreference" Type="System.String" Scope="User">
+      <Value Profile="(Default)">default</Value>
+    </Setting>
+    <Setting Name="LastUpdateCheckUTC" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">0069-04-20</Value>
+    </Setting>
+    <Setting Name="ServerAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)"></Value>
+    </Setting>
+    <Setting Name="ChatTheme" Type="System.String" Scope="User">
+      <Value Profile="(Default)">default</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

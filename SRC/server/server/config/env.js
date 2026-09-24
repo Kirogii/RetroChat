@@ -1,0 +1,19 @@
+const config = {
+    PORT: process.env.PORT || 10000,
+    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_SSL: process.env.DATABASE_SSL === 'true',
+    RCL_ADMIN_KEY: process.env.RCL_ADMIN_KEY,
+    RCL_WRITE_KEY: process.env.RCL_WRITE_KEY,
+    RCL_READ_KEY: process.env.RCL_READ_KEY,
+    PERSPECTIVE_API_KEY: process.env.PERSPECTIVE_API_KEY || null,
+    USER_SALT: process.env.USER_SALT,
+};
+
+for (const [key, value] of Object.entries(config)) {
+    if (value === undefined) {
+        console.error(`FATAL: Missing environment variable '${key}'`);
+        process.exit(1);
+    }
+}
+
+module.exports = config;

@@ -1,0 +1,370 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutText" xml:space="preserve">
+    <value>About Roblox Chat Launcher:
+Made with ❤︎ by Riri and Contributors
+Developed in VS 2026 🎀 Built with .NET / WinForms
+Server written in Node.js 🌸 Hosted on Render.com and Neon.com
+Source: https://github.com/RobloxChatLauncher/RobloxChatLauncher
+And of course, credits to you 💖</value>
+  </data>
+  <data name="AccountLinked" xml:space="preserve">
+    <value>🎀 Account linked successfully!</value>
+  </data>
+  <data name="AlreadyUpToDate" xml:space="preserve">
+    <value>Already up to date ({0})</value>
+  </data>
+  <data name="ChatInputBoxText" xml:space="preserve">
+    <value>Press / key | Ctrl+Shift+C to hide</value>
+  </data>
+  <data name="CheckingForUpdates" xml:space="preserve">
+    <value>Checking for updates...</value>
+  </data>
+  <data name="CodeNotFound" xml:space="preserve">
+    <value>❌ Code not found. Please check your profile and ensure you requested the correct username.</value>
+  </data>
+  <data name="ConnectedSuccessfully" xml:space="preserve">
+    <value>Connected successfully!</value>
+  </data>
+  <data name="ConnectingToServer" xml:space="preserve">
+    <value>Connecting to server {0}...</value>
+  </data>
+  <data name="ConnectionError" xml:space="preserve">
+    <value>Connection error: {0}</value>
+  </data>
+  <data name="ConnectionFailed" xml:space="preserve">
+    <value>Connection failed: {0}</value>
+  </data>
+  <data name="CouldNotFindClient" xml:space="preserve">
+    <value>Could not find a valid Roblox Client.</value>
+  </data>
+  <data name="CouldNotFindReleases" xml:space="preserve">
+    <value>Could not find any releases.</value>
+  </data>
+  <data name="CouldNotOpenLink" xml:space="preserve">
+    <value>Could not open link: {0}</value>
+  </data>
+  <data name="CurrentChannelID" xml:space="preserve">
+    <value>Current Channel ID</value>
+  </data>
+  <data name="Debug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="DebugConsoleHorizontalRule" xml:space="preserve">
+    <value>===================================================</value>
+  </data>
+  <data name="DebugConsoleInitialized" xml:space="preserve">
+    <value>DEBUG CONSOLE INITIALIZED AT {0}</value>
+  </data>
+  <data name="DebugConsoleTitle" xml:space="preserve">
+    <value>Roblox Chat Launcher Debugger</value>
+  </data>
+  <data name="DebugConsoleUseClose" xml:space="preserve">
+    <value>Use '/console' or '/debug' again to close</value>
+  </data>
+  <data name="DownloadingUpdate" xml:space="preserve">
+    <value>Downloading update ({0} → {1})...</value>
+  </data>
+  <data name="EchoResponse" xml:space="preserve">
+    <value>{0} (Only you can see this message.)</value>
+  </data>
+  <data name="EmoteError" xml:space="preserve">
+    <value>Emote error: {0}</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="FailedToQueueEmote" xml:space="preserve">
+    <value>Failed to queue emote.</value>
+  </data>
+  <data name="FailedToSendMessage" xml:space="preserve">
+    <value>Failed to send message: {0}</value>
+  </data>
+  <data name="FilterPreferenceCurrent" xml:space="preserve">
+    <value>Current message filter: {0}</value>
+  </data>
+  <data name="FilterPreferenceSet" xml:space="preserve">
+    <value>Message filter set to: {0}</value>
+  </data>
+  <data name="FetchingCode" xml:space="preserve">
+    <value>Fetching code for {0}...</value>
+  </data>
+  <data name="HardwareIdFailed" xml:space="preserve">
+    <value>⚠️ Could not read your device ID. Please restart the launcher and try again.</value>
+  </data>
+  <data name="InstallingUpdate" xml:space="preserve">
+    <value>Installing update... The app will close shortly.</value>
+  </data>
+  <data name="LauncherRegistered" xml:space="preserve">
+    <value>Launcher registered. ({0})</value>
+  </data>
+  <data name="LauncherRegisteredBalloonText" xml:space="preserve">
+    <value>Successfully registered! The next time you launch a game from the Roblox website, the chat overlay will start automatically.</value>
+  </data>
+  <data name="LauncherRegisteredBalloonTitle" xml:space="preserve">
+    <value>Roblox Chat Launcher</value>
+  </data>
+  <data name="LocalDataCleared" xml:space="preserve">
+    <value>Local data cleared. (Server sync may have failed).</value>
+  </data>
+  <data name="MessageRejectedApiError" xml:space="preserve">
+    <value>Your message could not be processed due to a server error. Please try again.</value>
+  </data>
+  <data name="MessageRejectedModeration" xml:space="preserve">
+    <value>Your message was not sent as it violates community guidelines.</value>
+  </data>
+  <data name="MessageRejectedQueueFull" xml:space="preserve">
+    <value>Your message was rejected because the server queue is full. Please try again shortly.</value>
+  </data>
+  <data name="MessageRejectedUnknown" xml:space="preserve">
+    <value>Your message was not sent due to unknown reasons.</value>
+  </data>
+  <data name="MessageHiddenDueToFilterSettings" xml:space="preserve">
+    <value>[Message hidden due to your filter settings.]</value>
+  </data>
+  <data name="MustBeVerifiedEmote" xml:space="preserve">
+    <value>You must be verified to use /emote.</value>
+  </data>
+  <data name="MutedSpeaker" xml:space="preserve">
+    <value>Speaker '{0}' has been muted.</value>
+  </data>
+  <data name="NoStableReleases" xml:space="preserve">
+    <value>No stable releases found. Use '/update prerelease' to check for alpha/beta versions.</value>
+  </data>
+  <data name="OpeningWebsite" xml:space="preserve">
+    <value>Opening website...</value>
+  </data>
+  <data name="RegistryWriteFailed" xml:space="preserve">
+    <value>Failed to write registry key: {0}</value>
+  </data>
+  <data name="RequestTimedOut" xml:space="preserve">
+    <value>Request timed out. (Render server may be waking up)</value>
+  </data>
+  <data name="ResolvedClientInfo" xml:space="preserve">
+    <value>Resolved Roblox Client: {0} ({1})</value>
+  </data>
+  <data name="RestoredRegistry" xml:space="preserve">
+    <value>Restored registry to: {0}</value>
+  </data>
+  <data name="RunningFromSource" xml:space="preserve">
+    <value>Running from source; update skipped.</value>
+  </data>
+  <data name="RunVerifyFirst" xml:space="preserve">
+    <value>⚠️ Please run /verify &lt;username&gt; first!</value>
+  </data>
+  <data name="Server" xml:space="preserve">
+    <value>Server</value>
+  </data>
+  <data name="SpeakerNotMuted" xml:space="preserve">
+    <value>Speaker '{0}' was not muted.</value>
+  </data>
+  <data name="StartupText" xml:space="preserve">
+    <value>Made with ❤︎ by Riri and Contributors
+Chat '/?' or '/help' for a list of chat commands.</value>
+  </data>
+  <data name="SwitchingServer" xml:space="preserve">
+    <value>Switching server...</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>Unknown command '{0}'. Use '/?' or '/help' for a list of commands.</value>
+  </data>
+  <data name="UnlinkingAccount" xml:space="preserve">
+    <value>Unlinking your Roblox account and clearing local data...</value>
+  </data>
+  <data name="UnmutedSpeaker" xml:space="preserve">
+    <value>Speaker '{0}' has been unmuted.</value>
+  </data>
+  <data name="UnverifiedSuccess" xml:space="preserve">
+    <value>🗑️ Successfully unverified. You are now a Guest.</value>
+  </data>
+  <data name="UpdateCheckFailed" xml:space="preserve">
+    <value>Update check failed: {0}</value>
+  </data>
+  <data name="UsageEmote" xml:space="preserve">
+    <value>Usage: /emote &lt;name&gt;</value>
+  </data>
+  <data name="UsageFilter" xml:space="preserve">
+    <value>Usage: /filter &lt;strict|default|relaxed|off&gt;</value>
+  </data>
+  <data name="UsageMute" xml:space="preserve">
+    <value>Usage: /mute &lt;speaker&gt;</value>
+  </data>
+  <data name="UsageUnmute" xml:space="preserve">
+    <value>Usage: /unmute &lt;speaker&gt;</value>
+  </data>
+  <data name="UsageVerify" xml:space="preserve">
+    <value>Usage: /verify &lt;RobloxUsername&gt;</value>
+  </data>
+  <data name="UsageWhisper" xml:space="preserve">
+    <value>Usage: /w "&lt;speaker 12345&gt;" message or /w &lt;speaker&gt; message</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>❌ Verification failed due to a server error.</value>
+  </data>
+  <data name="VerifyStepsText" xml:space="preserve">
+    <value>1. Code copied: {0}
+2. Paste it into your Roblox Profile 'About' section.
+3. Type /confirm to finish.
+Your code will expire in 10 minutes.</value>
+  </data>
+  <data name="WhisperFrom" xml:space="preserve">
+    <value>From {0}</value>
+  </data>
+  <data name="WhisperTo" xml:space="preserve">
+    <value>To {0}</value>
+  </data>
+  <data name="WSNotConnected" xml:space="preserve">
+    <value>WebSocket not connected. Use '/rc' or '/reconnect' to connect to server.</value>
+  </data>
+  <data name="WSReceiveError" xml:space="preserve">
+    <value>WS Receive Error: {0}</value>
+  </data>
+  <data name="WSSendError" xml:space="preserve">
+    <value>WS Send Error: {0}</value>
+  </data>
+  <data name="WSSendTimedOut" xml:space="preserve">
+    <value>WS send timed out. (Render server may be waking up)</value>
+  </data>
+  <data name="AttemptingLogin" xml:space="preserve">
+    <value>Attempting to log in...</value>
+  </data>
+  <data name="LoginSuccess" xml:space="preserve">
+    <value>Welcome back! Login successful.</value>
+  </data>
+  <data name="NoAccountLinked" xml:space="preserve">
+    <value>No account linked to this device. Use /verify &lt;username&gt; to start.</value>
+  </data>
+  <data name="LoggedOut" xml:space="preserve">
+    <value>You have been logged out.</value>
+  </data>
+  <data name="LoginFailed" xml:space="preserve">
+    <value>❌ Verification failed due to a server error.</value>
+  </data>
+  <data name="UserNotFoundInChannel" xml:space="preserve">
+    <value>User {0} not found in this channel.</value>
+  </data>
+  <data name="ItWillBeInstalled" xml:space="preserve">
+    <value>It will be installed when you close the app.
+Chat '/update' to install it now.</value>
+  </data>
+</root>

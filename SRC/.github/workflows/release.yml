@@ -1,0 +1,280 @@
+name: Build & Release Installer
+
+permissions:
+  contents: write
+  id-token: write # Required for keyless signing
+  attestations: write # Required for GitHub Attestation
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag for the release (e.g., v1.0.0)"
+        required: true
+      release_name:
+        description: "Name of the release (defaults to the tag)"
+        required: false
+      custom_notes:
+        description: "Custom message to include in release notes"
+        required: false
+        default: ""
+      prerelease:
+        description: "Is this a prerelease?"
+        required: false
+        default: false
+        type: boolean
+      dry_run:
+        description: "Build everything but do not create a GitHub release"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  validate-tag:
+    runs-on: ubuntu-slim
+    outputs:
+      clean_tag: ${{ steps.check-tag.outputs.clean_tag }}
+    
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Validate tag
+        id: check-tag
+        run: |
+          INPUT_TAG="${{ github.event.inputs.tag_name }}"
+
+          # Check for force character '!' at the end
+          if [[ "$INPUT_TAG" == *! ]]; then
+            FORCE_UPDATE=true
+            CLEAN_TAG="${INPUT_TAG%!}"
+          else
+            FORCE_UPDATE=false
+            CLEAN_TAG="$INPUT_TAG"
+          fi
+
+          # Normalize leading 'v'
+          CLEAN_TAG="${CLEAN_TAG#[vV]}"
+          CLEAN_TAG="v$CLEAN_TAG"
+
+          # Check if the tag is in valid SemVer format (with 'v' prefix as is conventional for tags)
+          if ! [[ "$CLEAN_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?(\+([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?$ ]]; then
+            echo "::error::Invalid tag format: $CLEAN_TAG"
+            exit 1
+          fi
+
+          # Check if the tag already exists
+          TAG_EXISTS=$(git tag -l "$CLEAN_TAG")
+          if [ -n "$TAG_EXISTS" ] && [ "$FORCE_UPDATE" = false ]; then
+            echo "::error::Tag $CLEAN_TAG already exists. To update the corresponding release artifacts, append '!' to the tag (e.g., $CLEAN_TAG!)"
+            exit 1
+          fi
+
+          echo "Tag $CLEAN_TAG is valid"
+
+          # Pass the clean tag to the next job
+          echo "clean_tag=$CLEAN_TAG" >> $GITHUB_OUTPUT
+          
+  build-release:
+    runs-on: windows-latest
+    needs: validate-tag
+    environment: release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # ---------------------------
+      # Set up build tools and deps
+      # ---------------------------
+      # .NET SDK 10.0
+      - name: Install .NET SDK 10.0.x
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: "10.0.x"
+          cache: false
+
+      # Cosign
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v4.1.2
+
+      # ---------------------------
+      # Build & validate installer
+      # ---------------------------
+      # Normalize tag & update Installer.iss
+      - name: Update version in Installer.iss if needed
+        working-directory: ./installer
+        shell: pwsh
+        run: |
+          $tag = "${{ needs.validate-tag.outputs.clean_tag }}"
+          if ($tag.StartsWith("v")) { $tag = $tag.Substring(1) }
+
+          $path = "Installer.iss"
+          $content = Get-Content $path
+          
+          # Check if the line exists before trying to change it
+          if (-not ($content -match "^AppVersion=")) {
+              Write-Error "Couldn't find 'AppVersion=' in $path."
+              exit 1
+          }
+
+          # Perform the replacement and force UTF8
+          $content -replace '^#define AppVersion "[^"]*"', "#define AppVersion `"$tag`"" | 
+            Set-Content $path -Encoding UTF8
+          
+          Write-Host "Successfully updated AppVersion to $tag in $path."
+
+      # Set up dotnet environment
+      - name: Clear NuGet cache
+        working-directory: ./client
+        run: dotnet nuget locals all --clear
+
+      # Build C# app
+      - name: Publish app (Release)
+        working-directory: ./client
+        run: dotnet publish -c Release --no-cache --disable-build-servers --force /p:ContinuousIntegrationBuild=true
+
+      # Compile Inno Setup
+      - name: Build installer with Inno Setup
+        working-directory: ./installer
+        shell: cmd
+        run: |
+          iscc Installer.iss
+
+      # Generate SHA-256
+      - name: Generate SHA-256 hash for installer
+        working-directory: ./installer
+        shell: pwsh
+        run: |
+          $installer = Get-ChildItem RobloxChatLauncherInstaller*.exe | Select-Object -First 1
+          if (-not $installer) {
+            Write-Error "Installer executable not found."
+            exit 1
+          }
+
+          $hash = Get-FileHash $installer.FullName -Algorithm SHA256 |
+            Select-Object -ExpandProperty Hash
+
+          Set-Content -Encoding ASCII -Path RobloxChatLauncherInstaller.exe.sha256 -Value $hash
+
+      # Sign and attest the installer with Cosign
+      - name: Sign the installer (Blob)
+        run: |
+          cosign sign-blob ./installer/RobloxChatLauncherInstaller.exe `
+            --bundle ./installer/RobloxChatLauncherInstaller.exe.cosign.bundle `
+            --yes `
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Sign and attest the installer with GitHub Attestation
+      - name: Attest Installer Build Provenance
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: 'installer/RobloxChatLauncherInstaller.exe'
+
+      # ---------------------------
+      # Generate and compose release notes
+      # ---------------------------
+      # Generate Conventional Commit Notes
+      - name: Generate Conventional Commit Notes
+        shell: pwsh
+        run: |
+         # conventional-changelog writes to CHANGELOG.md by default
+         npx --yes -p conventional-changelog@7.2.0 -p conventional-changelog-conventionalcommits conventional-changelog -p conventionalcommits -r 1
+
+      # Generate GitHub Release Notes
+      - name: Generate GitHub Release Notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          $responseJson = gh api `
+            --method POST `
+            -H "Accept: application/vnd.github+json" `
+            /repos/${{ github.repository }}/releases/generate-notes `
+            -f tag_name="${{ needs.validate-tag.outputs.clean_tag }}" | ConvertFrom-Json
+
+          $releaseBody = $responseJson.body
+          $releaseBody | Out-File -FilePath "GITHUB_NOTES.md" -Encoding utf8
+
+      # Compose final release notes
+      - name: Compose final release notes
+        shell: pwsh
+        run: |
+          $tagName = "${{ needs.validate-tag.outputs.clean_tag }}"
+          $customNotes = "${{ github.event.inputs.custom_notes }}"
+          $releaseFile = "RELEASE_BODY.md"
+
+          # If there's no custom message, don't put a horizontal rule above the changelog
+          if (-not [string]::IsNullOrWhiteSpace($customNotes)) {
+              $customNotes | Out-File -FilePath $releaseFile -Encoding utf8
+              "`n---`n" | Out-File -FilePath $releaseFile -Append -Encoding utf8
+          }
+
+          # conventional-changelog will write a header like:
+          # ## [](https://github.com/RobloxChatLauncher/RobloxChatLauncher/compare/v1.0.0...v) (YYYY-MM-DD)
+          # Read Changelog, Replace the '...v)' with the actual tag
+          $changelog = Get-Content -Path "CHANGELOG.md" -Raw
+          $updatedChangelog = $changelog -replace '\.\.\.v\)', "...$($tagName))"
+          # Find '## [](' and replace with a header
+          $updatedChangelog = $updatedChangelog -replace '## \[\]\(', '## [What''s Changed]('
+          
+          # Compose before adding GitHub Release Notes
+          $updatedChangelog | Out-File -FilePath $releaseFile -Append -Encoding utf8
+          
+          "`n---`n" | Out-File -FilePath $releaseFile -Append -Encoding utf8
+          
+          # Find '## What's Changed' in GitHub notes and replace with custom header
+          $githubNotes = Get-Content -Path "GITHUB_NOTES.md" -Raw
+          $githubNotes = $githubNotes -replace '## What''s Changed', '## Pull Requests'
+
+          # Final composure of release notes
+          $githubNotes | Out-File -FilePath $releaseFile -Append -Encoding utf8
+          
+          # Now the release notes will look like this:
+          # <Custom Release Notes>
+          # ---
+          # <Conventional Changelog>
+          # ---
+          # <GitHub's auto-generated release notes>
+
+      # ---------------------------
+      # Create GitHub Release if !dry run
+      # ---------------------------
+      - name: Create GitHub Release and upload artifacts
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.validate-tag.outputs.clean_tag }}
+          name: ${{ github.event.inputs.release_name || needs.validate-tag.outputs.clean_tag }}
+          prerelease: ${{ github.event.inputs.prerelease }}
+          # Add the custom message at the top
+          body_path: RELEASE_BODY.md
+          generate_release_notes: false
+          files: |
+            installer/RobloxChatLauncherInstaller*.exe
+            installer/RobloxChatLauncherInstaller.exe.sha256
+            installer/RobloxChatLauncherInstaller.exe.cosign.bundle
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ---------------------------
+      # Upload Artifacts for inspection if dry run
+      # ---------------------------
+      - name: Upload dry-run artifacts
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-dry-run-${{ needs.validate-tag.outputs.clean_tag }}-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 7
+          path: |
+            client/bin/Release/net10.0-windows/publish/**
+
+            installer/RobloxChatLauncherInstaller*.exe
+            installer/RobloxChatLauncherInstaller.exe.sha256
+            installer/RobloxChatLauncherInstaller.exe.cosign.bundle
+
+            RELEASE_BODY.md

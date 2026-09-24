@@ -1,0 +1,49 @@
+name: Auto-generate Localization Status
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  push:
+    paths:
+      - 'client/Localization/**'
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Generate MD
+        run: dotnet run .github/scripts/AuditLoc.cs
+
+      - name: Check for changes
+        id: check
+        run: |
+          git diff --quiet README.md || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.check.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs(readme): auto-generate localization status" 
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          signoff: true
+          title: "docs(readme): auto-generate localization status" 
+          body: |
+            Auto-generated localization status update. 
+          labels: |
+            documentation
+            github_actions
+          branch: docs/auto-generate-localization-status
+          delete-branch: true
+          add-paths: |
+            README.md

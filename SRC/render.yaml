@@ -1,0 +1,48 @@
+# Exported from Render on 2026-05-06T07:29:01Z
+# This file is NOT automatically synced and should
+# be exported after any changes to the environment
+version: "1"
+projects:
+- name: Roblox Chat Launcher
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: RobloxChatLauncher
+      runtime: docker
+      repo: https://github.com/RobloxChatLauncher/RobloxChatLauncher
+      plan: free
+      envVars:
+      - fromGroup: RobloxChatLauncher
+      region: oregon
+      healthCheckPath: /health
+      dockerContext: .
+      dockerfilePath: ./Dockerfile
+      autoDeployTrigger: checksPass
+      rootDir: server/
+    - type: web
+      name: RobloxChatLauncher.de
+      runtime: docker
+      repo: https://github.com/RobloxChatLauncher/RobloxChatLauncher
+      plan: free
+      envVars:
+      - fromGroup: RobloxChatLauncher
+      region: frankfurt
+      healthCheckPath: /health
+      dockerContext: .
+      dockerfilePath: ./Dockerfile
+      autoDeployTrigger: checksPass
+      rootDir: server/
+    - type: web
+      name: RobloxChatLauncher.sg
+      runtime: docker
+      repo: https://github.com/RobloxChatLauncher/RobloxChatLauncher
+      plan: free
+      envVars:
+      - fromGroup: RobloxChatLauncher
+      region: singapore
+      healthCheckPath: /health
+      dockerContext: .
+      dockerfilePath: ./Dockerfile
+      autoDeployTrigger: checksPass
+      rootDir: server/

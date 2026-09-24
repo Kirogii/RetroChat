@@ -1,0 +1,199 @@
+using System.Text;
+using System.Windows.Forms;
+using Gma.System.MouseKeyHook;
+
+using RobloxChatLauncher.Utils;
+
+namespace RobloxChatLauncher.Services
+{
+    // --------------------------------------------------
+    // Keyboard hook (layout-correct, shift-safe)
+    // --------------------------------------------------
+    class ChatKeyboardHandler : IDisposable
+    {
+        IKeyboardMouseEvents hook;
+        ChatForm form;
+        bool chatMode;
+        bool disposed;
+        internal bool BlockMouseInput { get; set; }
+
+        static bool IsNonTextKey(Keys key) =>
+            key == Keys.Escape ||
+            key == Keys.Enter ||
+            key == Keys.Back ||
+            key == Keys.ControlKey ||
+            key == Keys.ShiftKey ||
+            key == Keys.LWin || key == Keys.RWin ||
+            key == Keys.Menu || // Both alt keys
+            key == Keys.Left || key == Keys.Right ||
+            key == Keys.Up || key == Keys.Down;
+
+
+        public ChatKeyboardHandler(ChatForm chatForm)
+        {
+            form = chatForm;
+            hook = Hook.GlobalEvents();
+            hook.KeyDown += OnKeyDown;
+            hook.MouseDownExt += SuppressMouse;
+            hook.MouseUpExt += SuppressMouse;
+            hook.MouseWheelExt += SuppressMouse;
+        }
+
+        void SuppressMouse(object? sender,MouseEventExtArgs e)
+        {
+            if(BlockMouseInput&&form.IsRobloxForegroundProcess()){e.Handled=true;return;}
+            form.HandleGlobalMouseDown(new System.Drawing.Point(e.X,e.Y));
+        }
+
+        void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            chatMode = form.IsChatMode;
+            // 1. Ignore all input if the chat window is minimized
+            // This handles cases where the user minimizes Roblox
+            if (form.WindowState == FormWindowState.Minimized)
+                return;
+
+            // 2. Ignore all input if Roblox OR the Chat Window is NOT the active (focused) window
+            // We get the current foreground window and compare it to Roblox's or the Chat Window's handle
+            // This handles cases where the user alt-tabs away or clicks another window
+            IntPtr foregroundWindow = NativeMethods.GetForegroundWindow();
+            // Check if the foreground window is Roblox OR if it's our Chat Window
+            bool isRobloxFocused = form.IsRobloxForegroundProcess();
+            bool isChatFocused = (foregroundWindow == form.Handle) || form.ClassicGuiFocused;
+            if (!isRobloxFocused && !isChatFocused)
+                return;
+            if(form.ForwardingNativeInput)return;
+            if (form.HandleClassicKey(e.KeyCode)) { e.Handled=true; e.SuppressKeyPress=true; return; }
+
+            // Ignore any combination if the Win key is a modifier
+            bool isWinKey = e.KeyCode == Keys.LWin || e.KeyCode == Keys.RWin;
+            bool isWinModifier = (NativeMethods.GetKeyState((int)Keys.LWin) < 0) ||
+                                 (NativeMethods.GetKeyState((int)Keys.RWin) < 0);
+
+            if (isWinKey || isWinModifier)
+            {
+                return; // Let Windows handle its own shortcuts
+            }
+
+            if (!chatMode)
+            {
+                // Toggle UI Visibility: Ctrl + Shift + C
+                if (e.Control && e.Shift && e.KeyCode == Keys.C)
+                {
+                    form.ToggleVisibility();
+                    e.Handled = true;
+                    return;
+                }
+
+                // If the chat window is hidden, don't start chat mode or intercept the slash key
+                if (form.isWindowHidden)
+                    return;
+
+                if (e.KeyCode == Keys.OemQuestion) // slash key
+                {
+                    chatMode = true;
+                    form.StartChatMode();
+                    e.Handled = true;
+                }
+                return;
+            }
+
+            // --- Handle Ctrl Shortcuts ---
+            if (form.TryEmojiKey(e.KeyCode)) { e.Handled = true; return; }
+            if (e.Control)
+            {
+                if (e.KeyCode == Keys.V)
+                {
+                    form.AppendTextFromKey(Clipboard.GetText());
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            // --- Handle Arrow Keys ---
+            if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right || e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
+            {
+                // Pass the arrow key to the form to move the internal caret
+                form.HandleNavigation(e.KeyCode);
+                e.Handled = true;
+                return;
+            }
+
+            if (e.KeyCode == Keys.Escape)
+            {
+                chatMode = false;           // Stop intercepting keys in this app
+                form.CancelChatMode();      // Update UI (opacity/caret) but keep text
+                                            // DO NOT set e.Handled = true; 
+                                            // This allows the Escape key to "pass through" to the game/Windows
+                return;
+            }
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                // Use _ = to explicitly fire and forget the task
+                _ = form.Send();
+                chatMode = false;
+                e.Handled = true;
+                return;
+            }
+
+            if (e.KeyCode == Keys.Back)
+            {
+                form.Backspace();
+                e.Handled = true;
+                return;
+            }
+
+            string text = TranslateKey(e);
+            if (!string.IsNullOrEmpty(text))
+            {
+                form.AppendTextFromKey(text);
+                e.Handled = true;
+            }
+        }
+
+        string TranslateKey(KeyEventArgs e)
+        {
+            // Don't translate if Ctrl or Alt are held
+            bool isAlt = (e.Modifiers & Keys.Alt) != 0;
+            bool isControl = (e.Modifiers & Keys.Control) != 0;
+
+            if ((isControl || isAlt) && !(isControl && isAlt))
+            {
+                return null;
+            }
+
+            // Don't translate control keys into text characters
+            if (IsNonTextKey(e.KeyCode))
+                return null;
+
+            byte[] state = new byte[256];
+            if (!NativeMethods.GetKeyboardState(state))
+                return null;
+
+            StringBuilder sb = new StringBuilder(8);
+            IntPtr layout = NativeMethods.GetKeyboardLayout(0);
+
+            int result = NativeMethods.ToUnicodeEx(
+                (uint)e.KeyValue,
+                0,
+                state,
+                sb,
+                sb.Capacity,
+                0,
+                layout);
+
+            return result > 0 ? sb.ToString() : null;
+        }
+
+        public void Dispose()
+        {
+            if(disposed)return;disposed=true;
+            hook.KeyDown -= OnKeyDown;
+            hook.MouseDownExt -= SuppressMouse;
+            hook.MouseUpExt -= SuppressMouse;
+            hook.MouseWheelExt -= SuppressMouse;
+            hook.Dispose();
+        }
+    }
+}
